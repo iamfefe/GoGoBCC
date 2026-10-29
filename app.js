@@ -65,10 +65,16 @@ function submit(original){
  beep(ok);if(mastered()===ids.length)finish();
 }
 function advance(){const id=E.next(state,mode);if(id===null)finish();else showQuestion(id);}
+function restartPractice(){
+ celebrationTimers.forEach(clearTimeout);celebrationTimers=[];$('confetti').replaceChildren();
+ state=E.fresh(ids);save();render();start('all');
+}
 function finish(){
  const all=mastered()===ids.length;$('game-category').textContent=all?'✦ 任務完成':'♡ 補強完成';
  $('game-body').innerHTML=`<div class="summary ${all?'victory':''}">${all?'<div class="victory-stars" aria-hidden="true">✦ ★ ✦</div><div class="score-label">學習完成分數</div><div class="perfect-score"><strong>100</strong><span>分</span></div><div class="victory-ribbon">滿 分 過 關</div>':'<div class="big-emoji">🌟</div>'}<h2 id="game-title" tabindex="-1">${all?'太棒了！全部答對！':'目前沒有待補強的錯題！'}</h2><p>${all?ids.length+' 題全部過關，錯題也都學會了！<br>這是你一步一步練出來的滿分。':'目前的錯題都已答對，或尚未出現錯題。<br>繼續複習其他題目，把進度推到 100% 吧。'}</p><div class="summary-grid"><div><strong>${mastered()}/${ids.length}</strong><small>已過關題目</small></div><div><strong>${state.total}</strong><small>累計作答次數</small></div><div><strong>${state.best}</strong><small>最高連對紀錄</small></div></div>${all?'<button class="primary" id="replay">再放一次彩帶 🎉</button><br>':''}<button class="text-button" id="finish-map">返回首頁</button></div>`;
- $('finish-map').onclick=()=>closeDialog(game);$('game-title').focus();
+ $('finish-map').onclick=()=>closeDialog(game);
+ const restart=document.createElement('button');restart.id='restart-practice';restart.className='text-button';restart.textContent='重新練習';restart.onclick=restartPractice;
+ $('finish-map').after(document.createTextNode(' · '),restart);$('game-title').focus();
  if(all){$('replay').onclick=()=>celebrate(true);celebrate(true);}
 }
 function celebrate(grand=false){
